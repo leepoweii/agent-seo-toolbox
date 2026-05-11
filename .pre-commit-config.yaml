@@ -37,3 +37,10 @@ repos:
         language: system
         pass_filenames: false
         stages: [pre-push]
+
+      - id: llm-push-check
+        name: LLM security check (claude -p reviews outgoing diff)
+        entry: scripts/llm-push-check
+        language: system
+        pass_filenames: false
+        stages: [pre-push]

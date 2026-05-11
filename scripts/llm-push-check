@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# LLM security check — runs before push via pre-commit pre-push stage.
+# Pipes the outgoing diff to `claude -p` and blocks push if sensitive data found.
+
+set -euo pipefail
+
+if ! command -v claude &>/dev/null; then
+  echo "⚠️  llm-push-check: claude not on PATH, skipping"
+  exit 0
+fi
+
+# Diff of outgoing commits vs remote main (or all commits on a new branch)
+REMOTE_REF="origin/main"
+if git rev-parse --verify "$REMOTE_REF" &>/dev/null; then
+  BASE=$(git merge-base HEAD "$REMOTE_REF" 2>/dev/null || echo "")
+else
+  BASE=""
+fi
+
+if [ -n "$BASE" ]; then
+  DIFF=$(git diff "$BASE"..HEAD -- . 2>/dev/null | head -c 24000)
+else
+  DIFF=$(git show HEAD 2>/dev/null | head -c 24000)
+fi
+
+if [ -z "$DIFF" ]; then
+  echo "✅ llm-push-check: no diff to review"
+  exit 0
+fi
+
+PROMPT="You are a security auditor for a public open-source repo. Review this git diff for sensitive data that must not be pushed publicly.
+
+Flag these as FAIL:
+- Real client/business domain names (not example.com / my-site.com.tw / placeholder.com)
+- Real personal info: email, phone, Line ID
+- API keys, tokens, passwords, or credential strings
+- Database connection strings with real hostnames
+- Private IP addresses or Tailscale addresses
+- Chinese business names that identify a real client
+
+These are OK (do NOT flag):
+- example.com, my-site.com.tw, competitor-a.com, placeholder values
+- Generic SEO/GEO keywords used as test fixtures
+- pwlee (repo owner GitHub handle)
+- ep-xxxx.neon.tech placeholder (it's a template, not a real connection string)
+
+Diff to review:
+---
+${DIFF}
+---
+
+Reply with exactly one line: PASS  or  FAIL: <brief reason>"
+
+echo "🔍 llm-push-check: reviewing diff with Claude..."
+RESULT=$(claude -p "$PROMPT" 2>/dev/null)
+
+if echo "$RESULT" | grep -qi "^fail"; then
+  echo ""
+  echo "❌ llm-push-check BLOCKED push:"
+  echo "   $RESULT"
+  echo ""
+  echo "Fix the issue and try again. To skip (not recommended): SKIP=llm-push-check git push"
+  exit 1
+fi
+
+echo "✅ llm-push-check: $RESULT"
+exit 0
