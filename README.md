@@ -4,6 +4,55 @@ A CLI for Taiwan-market SEO ranking and keyword clustering, designed to be invok
 
 ---
 
+## Agent Quickstart (instructions for Claude)
+
+> This section is written for Claude Code. If you're a human reading this — you don't need to follow these steps yourself. Just tell Claude "set up the SEO toolbox" and it will handle everything.
+
+Claude: when a user arrives at this repo for the first time, follow this onboarding flow:
+
+**Step 1 — Offer an environment scan**
+Ask the user (via `AskUserQuestion`) whether they'd like you to scan their machine first. Scanning checks: Is `uv` installed? Is `seo` on PATH? Does `~/.config/agent-seo-toolbox/.env` exist? This lets you skip steps they've already completed.
+
+**Step 2 — Ask what they need**
+Use `AskUserQuestion` to collect:
+- Their website's domain (e.g. `my-clinic.com.tw`)
+- Their top competitors (e.g. `competitor-a.com, competitor-b.com`)
+- Whether they have credentials from a teammate, or need to sign up for DataForSEO
+
+Assume the user is non-technical. Use plain language — no jargon, no terminal commands in questions.
+
+**Step 3 — Install and configure**
+Run `uv sync --extra dev` if needed. Write `~/.config/agent-seo-toolbox/config.toml` via `seo init --non-interactive`.
+
+For credentials (`DATABASE_URL`, `DATAFORSEO_LOGIN`, `DATAFORSEO_PASSWORD`), **never ask for them in chat**. Instead:
+
+1. Create `~/.config/agent-seo-toolbox/.env` with placeholder comments:
+   ```
+   # Neon Postgres — copy from your project dashboard → Connection string
+   DATABASE_URL=
+
+   # DataForSEO — copy from https://app.dataforseo.com/api-dashboard
+   DATAFORSEO_LOGIN=
+   DATAFORSEO_PASSWORD=
+   ```
+2. Open the file in an editor — try VS Code first, fall back to Notepad:
+   ```bash
+   code ~/.config/agent-seo-toolbox/.env 2>/dev/null || notepad ~/.config/agent-seo-toolbox/.env
+   ```
+3. If the user doesn't have credentials yet, use the Chrome browser tools (`mcp__claude-in-chrome__*`) to guide them through signup:
+   - **Neon** — `https://neon.tech` → create a project → copy the connection string
+   - **DataForSEO** — `https://dataforseo.com` → create an account → find login/password in the API dashboard
+4. Tell the user: "Fill in the three values and save the file, then let me know when you're done."
+5. Once they confirm, proceed to Step 4.
+
+**Step 4 — Verify**
+Run `seo init --check` and report the result in plain language (not raw JSON).
+
+**Step 5 — First action**
+Ask what they want to do: check where a page ranks, or cluster a list of keywords. Then guide them through it.
+
+---
+
 ## Quickstart for new collaborators
 
 If a teammate has shared their `.env` with you, this is the fastest path:
