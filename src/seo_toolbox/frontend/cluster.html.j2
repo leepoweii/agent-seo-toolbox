@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cluster · {{ keywords|length }} keywords</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/static/cluster.css">
+</head>
+<body>
+
+<header class="page-header">
+  <div class="header-inner">
+    <div class="eyebrow">
+      <span class="brand">{{ brand|default("AGENT-SEO-TOOLBOX") }}</span>
+      <span class="dot">·</span>
+      <span>CLUSTERING</span>
+      <span class="dot">·</span>
+      <span class="meta-num">{{ keywords|length }} KW</span>
+    </div>
+
+    <div class="controls">
+      <label class="control-group">
+        <span class="control-label">THRESHOLD</span>
+        <input type="range" id="threshold" min="0" max="1" step="0.05" value="{{ threshold }}">
+        <span id="threshold-value" class="meta-num">{{ "%.2f"|format(threshold) }}</span>
+      </label>
+
+      <span class="legend">
+        <span class="dot-key own"></span>OWN
+        <span class="dot-key competitor"></span>COMPETITOR
+        <span class="dot-key authority"></span>AUTHORITY
+      </span>
+
+      <span class="grow"></span>
+
+      <div id="countdown" class="countdown">
+        <span class="control-label">SESSION</span>
+        <span id="time-left" class="time">{{ "%d:%02d"|format(session_seconds//60, session_seconds%60) }}</span>
+      </div>
+
+      <button id="save" class="save">Save &amp; Close</button>
+    </div>
+  </div>
+  <div class="hairline"></div>
+</header>
+
+<div class="workspace">
+  <nav id="explorer" class="explorer-panel"></nav>
+  <div id="graph-pane" class="graph-pane"></div>
+  <aside id="sidebar" class="sidebar-pane">
+    <div class="sidebar-empty">
+      <div class="eyebrow"><span>SIDEBAR</span></div>
+      <p class="lede">Click any keyword to see its SERP — AI Overview, Featured Snippet, People Also Ask, and the top-10 organic with overlap highlighted.</p>
+    </div>
+  </aside>
+</div>
+
+<script id="payload" type="application/json">
+{
+  "keywords": {{ keywords | tojson }},
+  "volumes": {{ volumes | tojson }},
+  "serps": {{ serps | tojson }},
+  "serp_features": {{ serp_features | tojson }},
+  "jaccard": {{ jaccard | tojson }},
+  "shared_count": {{ shared_count | tojson }},
+  "initial_clusters": {{ initial_clusters | tojson }},
+  "ungrouped": {{ ungrouped | tojson }},
+  "domains": {{ domains | tojson }},
+  "session_seconds": {{ session_seconds }},
+  "brand": {{ brand|default("AGENT-SEO-TOOLBOX") | tojson }},
+  "state_path": {{ state_path|default("") | tojson }}
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@13.0.3/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="/static/cluster.js"></script>
+<script src="/static/cluster-graph.js"></script>
+</body>
+</html>

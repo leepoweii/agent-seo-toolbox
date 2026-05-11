@@ -1,0 +1,15 @@
+.DS_Store
+.env
+.env.test
+config.toml
+agent-seo-toolbox.toml
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
+.venv/
+.claude/worktrees/
+docs/superpowers/

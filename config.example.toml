@@ -1,0 +1,20 @@
+# Copy to ~/.config/agent-seo-toolbox/config.toml
+# Or place as agent-seo-toolbox.toml in your project directory.
+# Secrets (DATABASE_URL, DATAFORSEO_*) go in .env, not here.
+
+[domains]
+own = "example.com"
+competitors = ["competitor-a.com", "competitor-b.com"]
+# authority_tlds = [".gov", ".edu", ".org"]  # default
+
+[defaults]
+location_code = 2158      # Taiwan
+language_code = "zh-TW"
+device = "mobile"
+os = "ios"
+similarity_method = "jaccard"   # or "percentage"
+cluster_threshold = 0.3
+
+[cache]
+serp_ttl_days = 7
+expansion_ttl_days = 30
