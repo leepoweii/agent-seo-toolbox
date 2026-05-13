@@ -53,12 +53,15 @@ seo rank-check "本地 SEO 優化" "https://example.com/page" | jq .
 # If rank > 5 or not in AI Overview, examine top-ranking competitors via cached SERP data
 ```
 
-**Batch check across keywords (parallel):**
+**Batch check across keywords (serial loop — single `seo` call per keyword):**
 ```bash
 for kw in "本地 SEO 優化" "GEO 在地搜尋優化" "SEO 工具推薦"; do
-  seo rank-check "$kw" "https://example.com/page" | jq -c '{kw: .keyword, rank: .organic_rank, aio: .in_ai_overview}'
+  seo rank-check "$kw" "https://example.com/page" \
+    | jq -c '{kw: .keyword, rank: .organic_rank, aio: .in_ai_overview}'
 done
 ```
+
+A native parallel `seo batch-rank` CLI is planned — see [docs/TODO.md](TODO.md). For now, the serial loop is fine for typical 10–30 keyword health checks.
 
 ---
 

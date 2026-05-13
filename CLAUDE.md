@@ -44,6 +44,7 @@ Invoke the `agent-seo-toolbox-init` skill — it orchestrates the steps above.
 | User asks | Run |
 |---|---|
 | "Where does X URL rank for keyword Y?" | `seo rank-check "Y" "X"` |
+| "Where does X URL rank for these N keywords?" (health check) | Serial loop over `seo rank-check` per keyword; see "Common patterns" below |
 | "Cluster these keywords" / "Group by intent" | `seo cluster keywords.csv` |
 | "Set up the toolbox" / first-time use | `seo init` (or invoke the `agent-seo-toolbox-init` skill) |
 | "Verify config / test connectivity" | `seo init --check` |
@@ -109,6 +110,17 @@ Note: this command does NOT write `.env` (credentials must be edited manually to
 seo rank-check "本地 SEO 優化" "https://example.com/page" | jq .
 # Read findings, organic_rank, in_ai_overview
 # If rank > 5, examine top-ranking competitors via cached SERP data
+```
+
+**"Health check this list of keywords against our URL":** (batch mode, no CLI yet)
+```
+URL="https://example.com/page"
+for kw in "kw1" "kw2" "kw3"; do
+  seo rank-check "$kw" "$URL" | jq -c '{kw: .keyword, organic_rank, in_aio: .in_ai_overview, cache_hit: .cache.hit, cost: .cost_usd}'
+done
+# Then summarize: Top 3 / Page 1 / Page 2+ / Not ranked / AI Overview cited
+# Cost rule: if N > 5, warn user of worst-case cost (N × ~$0.010) before running
+# Native `seo batch-rank` CLI is planned — see docs/TODO.md
 ```
 
 **"Cluster these and tell me what to write":**

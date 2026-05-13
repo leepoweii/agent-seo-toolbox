@@ -13,11 +13,35 @@ The `seo` CLI is on PATH after `uv tool install`. Full reference is in the repo'
 
 ### Common flows
 
-**Rank check:**
+**Rank check (single keyword × single URL):**
 ```bash
 seo rank-check "<keyword>" "<target_url>" | jq .
 ```
 Returns JSON with `organic_rank`, `in_ai_overview`, `in_featured_snippet`, cache info, and findings list.
+
+**Batch rank check (N keywords × same URL — "我們在這些字各排第幾"):**
+
+When the user gives multiple keywords against one target URL (e.g. health-check, monthly tracking, "幫我看這 20 個字"), loop `seo rank-check` and aggregate. No batch CLI exists yet (planned, see `docs/TODO.md`).
+
+Template:
+```bash
+URL="https://example.com/page"
+for kw in "本地 SEO 優化" "GEO 在地搜尋優化" "SEO 工具推薦"; do
+  seo rank-check "$kw" "$URL" \
+    | jq -c '{kw: .keyword, organic_rank, in_aio: .in_ai_overview, in_fs: .in_featured_snippet, cache_hit: .cache.hit, cost: .cost_usd}'
+done
+```
+
+Then summarize to the user as a table (markdown), grouped by:
+- **Top 3** (organic_rank ≤ 3)
+- **Page 1** (4 ≤ organic_rank ≤ 10)
+- **Page 2+** (organic_rank > 10)
+- **Not ranked** (organic_rank null)
+- **AI Overview cited** — list separately, since AIO citation is independent of rank
+
+**Cost-before-you-run rule:** If N > 5, estimate worst-case cost before running and tell the user (e.g. "20 misses × ~$0.010 = up to $0.20; cache hits free"). Don't surprise them.
+
+If the user has a CSV with a `keyword` column, read it in shell (`cut -d, -f1 | tail -n +2`) rather than asking them to paste keywords inline.
 
 **Clustering:**
 ```bash

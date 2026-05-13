@@ -52,7 +52,7 @@ Three metrics are computed for every keyword pair:
 Similarity is computed on **the top 10 organic URLs** for each keyword. Specifically:
 
 ```
-1. Call DataForSEO with depth=100 (request up to 100 SERP items).
+1. Call DataForSEO with depth=N (20 for cluster, 60 for rank-check — see below).
 2. Filter response to type == 'organic' only.
    (Discard: ads, AI Overview, featured snippet, People Also Ask,
     image pack, video carousel, knowledge graph, local pack, etc.)
@@ -132,7 +132,7 @@ Same normalization as `apps/web-v2/src/lib/grouping.ts` in simple-seo-tools.
 
 ## Rank-check methodology
 
-For a target URL given a keyword, fetch one DataForSEO SERP (depth=20, mobile/iOS, country-level Taiwan, zh-TW) and report:
+For a target URL given a keyword, fetch one DataForSEO SERP (depth=60, mobile/iOS, country-level Taiwan, zh-TW) and report:
 
 - **AI Overview citation** — does the URL appear in `ai_overview.references` or `ai_overview.items`?
 - **Featured Snippet** — does the URL match `featured_snippet.url`?

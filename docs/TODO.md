@@ -1,5 +1,26 @@
 # TODO
 
+## Batch rank-check CLI (backlog)
+
+**Current state:** `seo rank-check` only takes one keyword × one URL. Batch use ("這 20 個字各排第幾") today goes through Claude looping the single-call CLI (see `agent-seo-toolbox` skill's batch pattern).
+
+**Why promote it to CLI:**
+- Parallel calls to DataForSEO (asyncio.gather) — N× faster than serial subprocess loop
+- One JSON output with summary stats (ranked / not_ranked / in_aio counts, total cost) — easier to consume from any caller, not just Claude
+- Usable from cron / shell pipelines without an LLM in the loop
+
+**Sketch:**
+```bash
+seo batch-rank <keywords.csv> <target_url> [--concurrency 5]
+```
+- CSV: `keyword` column required (volume optional, ignored for rank-check)
+- Output: `{target_url, results: [...], summary: {total, ranked, in_aio, in_fs, total_cost_usd, cache_hits}}`
+- Implementation: new `src/seo_toolbox/commands/batch_rank.py`, reuses `rank_check` lookup function, wraps `asyncio.gather`
+
+**Not a priority** — Claude-driven loop works fine for typical 10–30 keyword batches. Promote when someone wants this from cron or from a non-Claude caller.
+
+---
+
 ## Volume fetching (next feature branch: `feature/volume-fetch`)
 
 **Trust user-provided volumes; fetch missing ones; never pollute cache with user values.**
