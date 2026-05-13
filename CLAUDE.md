@@ -81,7 +81,7 @@ Output JSON schema:
 
 `organic_rank` is `null` if not found in top ~60 organic. Cache hit: $0. Miss: ~$0.008–0.010 (depth=60 + AI Overview + PAA add-ons).
 
-### `seo cluster <keywords.csv> [--threshold 0.3] [--method jaccard|percentage] [--output out.csv]`
+### `seo cluster <keywords.csv> [--threshold 0.3] [--method percentage|jaccard] [--output out.csv]`
 
 Read a CSV with `keyword[,volume]` columns. Fetch top-10 organic SERPs per keyword (cache-first). Open an interactive HTML UI in the browser. User adjusts clusters via drag-drop and threshold slider, clicks Save. Server writes `cluster_state.json` and exits.
 

@@ -1,9 +1,10 @@
-"""seo cluster — fetch SERPs (cache-first), compute Jaccard, serve interactive UI.
+"""seo cluster — fetch SERPs (cache-first), compute similarity, serve interactive UI.
 
 Lifecycle:
   1. Read keywords + volumes from CSV.
   2. For each keyword: cache lookup (TTL valid → use; else fetch depth=20, upsert).
-  3. Compute Jaccard similarity matrix (full N×N) and shared-count matrix.
+  3. Compute similarity matrix (full N×N, method per --method flag — default
+     `percentage` / Szymkiewicz–Simpson) and shared-count matrix.
   4. Run greedy volume-anchored clustering.
   5. Render Jinja2 template, start http.server on free port, open browser.
   6. Block until POST /save (or 30-min timeout). Write cluster_state.json.

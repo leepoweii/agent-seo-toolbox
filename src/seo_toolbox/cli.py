@@ -4,11 +4,12 @@ import sys
 from seo_toolbox.commands import cluster as cluster_cmd
 from seo_toolbox.commands import init as init_cmd
 from seo_toolbox.commands import rank_check as rank_check_cmd
+from seo_toolbox.registry import package_version
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(prog="seo", description="SEO toolbox CLI")
-    parser.add_argument("--version", action="version", version="0.1.0")
+    parser.add_argument("--version", action="version", version=package_version())
     sub = parser.add_subparsers(dest="command", required=True)
     init_cmd.add_subparser(sub)
     rank_check_cmd.add_subparser(sub)

@@ -86,18 +86,18 @@ class Cluster:
 # ----------------------------------------------------------------------
 
 class UI:
-    SIDEBAR_WIDTH_PX = 420  # CSS --sidebar-w
+    SIDEBAR_WIDTH_PX = 390  # CSS --sidebar-w
 
 
 class Colors:
-    """Hex strings — kept in sync with `:root` in cluster.css.
+    """Hex strings — kept in sync with `:root` in frontend/cluster.css.
     Used when a backend payload needs to know the color (e.g. legend
     rendered server-side, or a non-HTML output channel)."""
-    OWN = "#3b8e5a"          # green
-    COMPETITOR = "#b03a3a"   # red
-    AUTHORITY = "#c97a2b"    # orange
-    WARN = "#b87333"         # copper
-    DANGER = "#8b1a1a"
+    OWN = "#0EA472"          # green
+    COMPETITOR = "#E94B7D"   # pink (brand)
+    AUTHORITY = "#F59E0B"    # amber
+    WARN = "#D97706"
+    DANGER = "#DC2626"
 
 
 __all__ = [

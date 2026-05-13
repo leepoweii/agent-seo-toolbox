@@ -27,7 +27,7 @@ Adjacent IR work:
 The exact recipe — "cluster keywords if their top-10 SERPs share ≥ N URLs" — was popularized by **Keyword Insights** in 2021 and is now the de-facto standard across SEO tools (Cluster AI, Surfer SEO, ContentKing).
 
 > Keyword Insights. *Keyword Clustering: Probably The Best Guide.* [keywordinsights.ai/blog/keyword-clustering-guide](https://www.keywordinsights.ai/blog/keyword-clustering-guide/)
-> Default rule: ≥ 30% top-10 URL overlap (Jaccard ≈ 0.3) → same cluster.
+> Industry rule of thumb: ≥ 30% top-10 URL overlap → same cluster. Keyword Insights originally framed this on Jaccard (≈ 0.3); this toolbox ships **percentage / Szymkiewicz–Simpson** as the default (see "Similarity metrics" below), keeping the same 0.30 threshold but with containment semantics that better fit parent/child topic groupings.
 
 **Honest caveat:** the precise "Jaccard on top-10 URLs to cluster keywords" recipe is industry practice rather than a formally cited academic method. The IR literature establishes the underlying premise; the SEO industry operationalized it.
 
@@ -41,11 +41,11 @@ Three metrics are computed for every keyword pair:
 | **Jaccard** | `\|A ∩ B\| / \|A ∪ B\|` | 0 – 1 | "Share 25% of combined URLs" |
 | **Percentage** (Szymkiewicz–Simpson) | `\|A ∩ B\| / min(\|A\|, \|B\|)` | 0 – 1 | "80% of smaller SERP is contained in bigger" |
 
-**Default: Jaccard.** Symmetric, normalized 0–1, matches industry default and the existing simple-seo-tools algorithm. Threshold default `0.3` ≈ "share at least 3-4 URLs out of 10."
+**Default: percentage** (Szymkiewicz–Simpson). Threshold default `0.30` ≈ "≥ 3 of 10 SERP URLs shared between the smaller SERP and the larger one." Chosen because parent/child topic relationships — where one keyword's narrow-intent SERP is a subset of a broader keyword's SERP — are common in Taiwan SEO workflows; percentage spikes on containment while Jaccard would stay moderate and miss the grouping.
 
-**When percentage helps:** parent/child topic relationships. If keyword B's narrow-intent SERP is a subset of keyword A's broad-intent SERP, percentage spikes (containment) while Jaccard stays moderate.
+**Use `--method jaccard`** when you want symmetric similarity for research / academic workflows. Jaccard is the metric SE Ranking / Keyword Insights originally popularized; `--method percentage` is what this toolbox ships and what `cluster.py` uses by default.
 
-**Why we display all three in the UI:** algorithm uses Jaccard for thresholds (mathematical purity); humans read raw count more easily ("4 shared URLs" vs "0.25 Jaccard"). Showing both lets users adjust the threshold by whichever feels intuitive.
+**Why we display all three in the UI:** the active method (percentage by default) drives the threshold check, but the sidebar also shows raw shared count and Jaccard so humans can adjust the slider by whichever number feels intuitive ("share 4 URLs" vs "0.25 Jaccard" vs "40% of smaller SERP").
 
 ## SERP data used for similarity
 
